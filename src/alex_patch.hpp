@@ -10,6 +10,7 @@ To be used as a descriptor generation tool for image patch matching.
 
 // #include "opencv2/imgproc.hpp"
 #include <opencv2/highgui/highgui.hpp>
+#include "opencv2/imgproc/imgproc.hpp"
 #include <torch/script.h> // One-stop header.
 #include <iostream>
 #include <deque>
@@ -18,10 +19,11 @@ To be used as a descriptor generation tool for image patch matching.
 class AlexPatch
 {
 private:
-    /* data */
+    torch::jit::script::Module model; 
 public:
     AlexPatch(/* args */);
     ~AlexPatch();
+    void SetupModel();
 
     // Get similarity score between two image patches.
     // The lower the score the more similar the patches are.
@@ -32,7 +34,7 @@ public:
      * Outputs:
                float similarity score
     */
-    float GetSimilarityBwPatches(/*cv::Mat patch_1, cv::Mat patch_2*/);
+    float GetSimilarityBwPatches(cv::Mat patch_1, cv::Mat patch_2);
     
     // Transform cv::Mat image to the AlexNet input requirements.
     torch::Tensor ImageToTensorImagenet(cv::Mat img);
