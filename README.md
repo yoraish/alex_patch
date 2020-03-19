@@ -8,3 +8,6 @@
 `./make_alex_patch`
 * Execute inference on patches by running:
 `./build/alex_patch`
+
+#### Couple of notes
+* Make sure that the absolute path to `libtorch` is specified in `make_alex_patch`.
