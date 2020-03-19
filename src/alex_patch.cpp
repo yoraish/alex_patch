@@ -171,7 +171,7 @@ float AlexPatch::EvaluateSequence(std::string seq_name){
         }
     }
     std::cout << "OVERALL COLLISIONS " << collision_counter << "\n";
-    return collisions_counter;
+    return collision_counter;
 
 }
 
