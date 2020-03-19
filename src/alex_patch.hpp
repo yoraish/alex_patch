@@ -23,7 +23,6 @@ private:
 public:
     AlexPatch(/* args */);
     ~AlexPatch();
-    void SetupModel();
 
     // Get similarity score between two image patches.
     // The lower the score the more similar the patches are.
@@ -38,6 +37,8 @@ public:
     
     // Transform cv::Mat image to the AlexNet input requirements.
     torch::Tensor ImageToTensorImagenet(cv::Mat img);
+
+    float EvaluateSequence(std::string seq_name = "0000");
 
 };
 
