@@ -32,7 +32,6 @@ float AlexPatch::GetSimilarityBwPatches(cv::Mat patch_1,  cv::Mat patch_2){
     // Create a vector of inputs.
     std::vector<torch::jit::IValue> inputs_1;
     inputs_1.push_back(transformed_patch_1);
-
     // Execute the model and turn its output into a tensor.
     torch::Tensor desc_1 = model.forward(inputs_1).toTensor();
 
@@ -46,18 +45,18 @@ float AlexPatch::GetSimilarityBwPatches(cv::Mat patch_1,  cv::Mat patch_2){
     // Execute the model and turn its output into a tensor.
     torch::Tensor desc_2 = model.forward(inputs_2).toTensor();   
     torch::Tensor diff = desc_1 - desc_2; 
-
-    // torch::Tensor diff = torch::randn({1, 4});
-
-    float similarity_value = 0;
-    for (int i = 0; i < diff.sizes()[1]; i++){
-        auto entry = diff[0][i].item<float>();
-
-        similarity_value+= std::pow(entry,2);
-    }
-    similarity_value = std::pow(similarity_value,0.5);
-
+    auto similarity_value = diff.norm(2).item<float>();
+    std::cout <<"nom" << similarity_value <<"nom\n";
     return similarity_value;
+
+    // float similarity_value = 0;
+    // for (int i = 0; i < diff.sizes()[1]; i++){
+    //     auto entry = diff[0][i].item<float>();
+    //     similarity_value += std::pow(entry,2);
+    // }
+    // similarity_value = std::pow(similarity_value,0.5);
+
+    // return similarity_value;
 }
 
 
@@ -78,24 +77,32 @@ float AlexPatch::GetSimilarityBwPatches(cv::Mat patch_1,  cv::Mat patch_2){
         return tensor_t
 */
 torch::Tensor AlexPatch::ImageToTensorImagenet(cv::Mat img){
+    // Referenced code from here https://gitmemory.com/issue/pytorch/pytorch/14273/550272489
+    // Starting with raw image loaded with cv::imread(path_to_img).
+    // Convert color ordering to RGB.
+    cv::cvtColor( img, img, cv::COLOR_BGR2RGB );
+
     // Resize to 227,227,3.
-    cv::resize(img, img, cv::Size(227, 227), cv::INTER_CUBIC);
+    cv::Size rsz = { 227, 227 };
+    cv::resize( img, img, rsz, cv::INTER_CUBIC);
+    // Convert to float and put pixels in range [0,1]
+    img.convertTo( img, CV_32FC3, 1.0/255.0 );
 
-
-    cv::Mat mean;
-    cv::Mat stddev;
-    cv::meanStdDev(img, mean, stddev);
-
-    if (false){
-    cv::imshow("resized", img);
-    cv::waitKey();
-    }
 
     // Convert to tensor.
-    torch::Tensor img_tensor = torch::from_blob(img.data, { 1, img.rows, img.cols, 3 }, torch::kByte);
+    torch::Tensor img_tensor = torch::from_blob(img.data, { 1, img.rows, img.cols, 3 });
+    img_tensor = img_tensor.to(torch::kFloat);
     img_tensor = img_tensor.permute({0,3,1,2});
-    img_tensor = img_tensor.toType(torch::kFloat);
-    img_tensor = img_tensor.sub(0.485).div(0.225);
+
+    //  Normalize data
+    img_tensor[0][0] = img_tensor[0][0].sub(0.485).div(0.229);
+    img_tensor[0][1] = img_tensor[0][1].sub(0.456).div(0.224);
+    img_tensor[0][2] = img_tensor[0][2].sub(0.406).div(0.225);
+
+    // std::cout << img_tensor << "\n";
+
+    img_tensor = img_tensor.sub(0.0).div(1.0);
+
     return img_tensor;
 
 
@@ -116,7 +123,7 @@ float AlexPatch::EvaluateSequence(std::string seq_name){
     std::size_t collision_counter = 0;
 
     // TODO(yorai): Merge this for loop with the one above.
-    for (int frame_name_ix = 0; frame_name_ix < frame_names.size()-1; frame_name_ix ++){
+    for (std::size_t frame_name_ix = 0; frame_name_ix < frame_names.size()-1; frame_name_ix ++){
         // Get the objects in the current frame.
         const std::string frame_name_current = frame_names[frame_name_ix];
         std::vector<cv::String> obj_paths_current;
@@ -146,7 +153,7 @@ float AlexPatch::EvaluateSequence(std::string seq_name){
 
             // Get the similarity value between object and itself in the future.
             const float simi_value_same = this->GetSimilarityBwPatches(cv::imread(obj_path_curr), cv::imread(path_to_obj_in_next));
-            std::cout << obj_path_curr << " <=> " << path_to_obj_in_next << "\n";
+            std::cout << obj_path_curr.substr(42,obj_path_curr.size()) << " <=> " << path_to_obj_in_next.substr(42,path_to_obj_in_next.size()) << "\n";
             std::cout<<simi_value_same<<"\n";
 
             // Similarity value between current object and all others in the next frame.
@@ -158,13 +165,13 @@ float AlexPatch::EvaluateSequence(std::string seq_name){
                 }
 
             simi_value_diff = this->GetSimilarityBwPatches(cv::imread(obj_path_curr), cv::imread(obj_path_next));
-            std::cout << obj_path_curr << " <=> " << obj_path_next << "\n";
-            std::cout<<simi_value_diff<<"\n";
+            std::cout << obj_path_curr.substr(42,obj_path_curr.size()) << " <=> " << obj_path_next.substr(42,obj_path_next.size()) << "\n";
+            std::cout<<simi_value_diff<<" >> " <<simi_value_same <<"\n\n";
             
             // If the value between different objects is lower than the same object in consecutive frames, we have a collision.
 
             if (simi_value_diff <= simi_value_same){
-                std::cout<<"COLLISION\n";
+                std::cout<<"*******************COLLISION**********\n";
                 collision_counter ++;
                 }
             }
