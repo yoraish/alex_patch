@@ -5,7 +5,7 @@ find_package(Torch REQUIRED)
 find_package( OpenCV REQUIRED )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
-add_executable(alex_patch src/main.cpp src/alex_patch.cpp src/alex_patch.hpp)
+add_executable(alex_patch src/main.cpp src/alex_patch/alex_patch.cpp src/alex_patch/alex_patch.hpp)
 target_link_libraries(alex_patch "${TORCH_LIBRARIES}" "${OpenCV_LIBS}")
 set_property(TARGET alex_patch PROPERTY CXX_STANDARD 14)
 

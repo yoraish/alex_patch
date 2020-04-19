@@ -13,15 +13,41 @@
 
 #pragma once
 
-// #include "opencv2/imgproc.hpp"
-#include <torch/script.h>  // One-stop header.
 #include <deque>
 #include <iostream>
-#include <opencv2/highgui/highgui.hpp>
 #include <vector>
-#include "opencv2/imgproc/imgproc.hpp"
 
-class AlexPatch {
+#include <torch/script.h>  // One-stop header.
+
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
+namespace alex_patch {
+
+class AlexPatch final {
+ public:
+  explicit AlexPatch(const std::string& model_path);
+
+  /**
+   * Similarity value vetween two patches. Updates descriptors associated with
+   * each patch.
+
+   * @param  {const cv::Mat &} patch1 :
+   * @param  {const cv::Mat &} patch2 :
+   * @param  {cv::Mat*} desc1         : to be modified with the first descriptor
+   * vector.
+   * @param  {cv::Mat*} desc2         : to be modified with the second
+   * descriptor vector.
+
+   * @return {float}                  : the similarity score between the
+   * patches. (Lower is more similar.)
+   */
+
+  float PatchDistanceL2(const cv::Mat& patch1, const cv::Mat& patch2,
+                        cv::Mat* desc1 = nullptr, cv::Mat* desc2 = nullptr);
+
+  // float EvaluateSequence(std::string seq_name = "0000");
+
  private:
   torch::jit::script::Module model;
 
@@ -32,10 +58,7 @@ class AlexPatch {
    * @param  {cv::Mat} img    :
    * @return {torch::Tensor}  :
    */
-  torch::Tensor ImageToTensorImagenet(cv::Mat img);
-
- public:
-  AlexPatch(/* args */);
+  const torch::Tensor ImageToTensorImagenet(cv::Mat img);
 
   /**
    * PatchToTensor
@@ -56,24 +79,6 @@ class AlexPatch {
    */
   float TensorDistanceL2(const torch::Tensor& tensor1,
                          const torch::Tensor& tensor2);
-
-  /**
-   * Similarity value vetween two patches. Updates descriptors associated with
-   * each patch.
-
-   * @param  {const cv::Mat &} patch1 :
-   * @param  {const cv::Mat &} patch2 :
-   * @param  {cv::Mat*} desc1         : to be modified with the first descriptor
-   * vector.
-   * @param  {cv::Mat*} desc2         : to be modified with the second
-   * descriptor vector.
-
-   * @return {float}                  : the similarity score between the
-   * patches. (Lower is more similar.)
-   */
-
-  float PatchDistanceL2(const cv::Mat& patch1, const cv::Mat& patch2,
-                        cv::Mat* desc1 = nullptr, cv::Mat* desc2 = nullptr);
-
-  float EvaluateSequence(std::string seq_name = "0000");
 };
+
+}  // namespace alex_patch
