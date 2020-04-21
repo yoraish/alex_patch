@@ -10,7 +10,7 @@
  * @brief compute the learned matching cost between image patches.
  *
  */
-#include "alex_patch/alex_patch.hpp"
+#include "alex_patch.hpp"
 
 #include <string>
 #include <vector>

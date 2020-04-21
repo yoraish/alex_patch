@@ -125,10 +125,10 @@ int main() {
   alex_patch::AlexPatch my_alex_patch(model_path);
 
   // Patch image (cv::Mat) from path.
-  std::string patch_1_path = "media/0000/000000/0.png";
+  std::string patch_1_path = "../../media/0000/000000/0.png";
   cv::Mat patch1 = cv::imread(patch_1_path);
 
-  std::string patch_2_path = "media/0000/000000/1.png";
+  std::string patch_2_path = "../../media/0000/000000/1.png";
   cv::Mat patch2 = cv::imread(patch_2_path);
 
   // Ask for similarity between two patches.
