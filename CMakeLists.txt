@@ -5,6 +5,9 @@ find_package(Torch REQUIRED)
 find_package( OpenCV REQUIRED )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
+include_directories(SYSTEM src
+  ${OpenCV_INCLUDE_DIRS}
+  ${TORCH_INCLUDE_DIRS})
 
 # cmake install setup (must be called after all find_packages)
 include(cmake/setup.cmake)
