@@ -68,6 +68,18 @@ float AlexPatch::PatchDistanceL2(const cv::Mat& patch1, const cv::Mat& patch2,
   return dist;
 }
 
+void AlexPatch::DescriptorFromPatch(const cv::Mat& patch,
+                                    cv::Mat* desc = nullptr) {
+  // Convert one patch to a torch::Tensor.
+  torch::Tensor desc_tensor = PatchToDescTensor(patch);
+
+  // Update descriptors in cv::Mat format.
+  cv::Mat mat_from_desc(cv::Size(desc_tensor.size(1), desc_tensor.size(0)),
+                        CV_32F, desc_tensor.data_ptr());
+
+  (*desc) = mat_from_desc.clone();
+}
+
 /*C++ implementation of the following Python transformation.
     def ImageToTensorImageNet(self, img):
         img_size = self.img_size

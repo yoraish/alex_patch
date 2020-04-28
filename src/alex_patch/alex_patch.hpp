@@ -46,7 +46,8 @@ class AlexPatch final {
   float PatchDistanceL2(const cv::Mat& patch1, const cv::Mat& patch2,
                         cv::Mat* desc1 = nullptr, cv::Mat* desc2 = nullptr);
 
-  // float EvaluateSequence(std::string seq_name = "0000");
+  // Modifies a pointer to a cv::Mat, stores extracted descriptor.
+  void DescriptorFromPatch(const cv::Mat& patch, cv::Mat* desc = nullptr);
 
  private:
   torch::jit::script::Module model;
