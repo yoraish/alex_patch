@@ -30,6 +30,20 @@ AlexPatch::AlexPatch(const std::string& model_path) {
   std::cout << "ok\n";
 }
 
+float AlexPatch::DescDistanceL2(const cv::Mat& desc1, const cv::Mat& desc2) {
+  float dist = cv::norm(desc1, desc2);
+  return dist;
+}
+
+float AlexPatch::DescDistanceCosine(const cv::Mat& desc1,
+                                    const cv::Mat& desc2) {
+  float dot_1_2 = desc1.dot(desc2);
+  float dot_1_1 = desc1.dot(desc1);
+  float dot_2_2 = desc2.dot(desc2);
+  double dist = -dot_1_2 / std::sqrt(dot_1_1 * dot_2_2);
+  return dist;
+}
+
 torch::Tensor AlexPatch::PatchToDescTensor(const cv::Mat& patch) {
   // Transforming image patch to torch tensor, and passing through model.
   torch::Tensor transformed_tensor = ImageToTensorImagenet(patch);
@@ -46,6 +60,13 @@ float AlexPatch::TensorDistanceL2(const torch::Tensor& tensor1,
   float dist = diff.norm(2).item<float>();
   return dist;
 }
+
+// float AlexPatch::TensorDistanceCosine(const torch::Tensor& tensor1,
+//                                       const torch::Tensor& tensor2) {
+//   torch::Tensor diff = tensor1 - tensor2;
+//   float dist = diff.norm(2).item<float>();
+//   return dist;
+// }
 
 float AlexPatch::PatchDistanceL2(const cv::Mat& patch1, const cv::Mat& patch2,
                                  cv::Mat* desc1, cv::Mat* desc2) {
@@ -68,8 +89,7 @@ float AlexPatch::PatchDistanceL2(const cv::Mat& patch1, const cv::Mat& patch2,
   return dist;
 }
 
-void AlexPatch::DescriptorFromPatch(const cv::Mat& patch,
-                                    cv::Mat* desc = nullptr) {
+void AlexPatch::DescriptorFromPatch(const cv::Mat& patch, cv::Mat* desc) {
   // Convert one patch to a torch::Tensor.
   torch::Tensor desc_tensor = PatchToDescTensor(patch);
 

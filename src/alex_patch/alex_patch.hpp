@@ -49,6 +49,12 @@ class AlexPatch final {
   // Modifies a pointer to a cv::Mat, stores extracted descriptor.
   void DescriptorFromPatch(const cv::Mat& patch, cv::Mat* desc = nullptr);
 
+  // Computes L2 distance between learned descriptors.
+  float DescDistanceL2(const cv::Mat& desc1, const cv::Mat& desc2);
+
+  // Computes Cosine distance between descriptor vectors.
+  float DescDistanceCosine(const cv::Mat& desc1, const cv::Mat& desc2);
+
  private:
   torch::jit::script::Module model;
 
@@ -80,6 +86,10 @@ class AlexPatch final {
    */
   float TensorDistanceL2(const torch::Tensor& tensor1,
                          const torch::Tensor& tensor2);
+
+  // Cosine Distance between tensors,
+  float TensorDistanceCosine(const torch::Tensor& tensor1,
+                             const torch::Tensor& tensor2);
 };
 
 }  // namespace alex_patch

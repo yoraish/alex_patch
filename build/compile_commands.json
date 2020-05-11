@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/racecar/rrg/alex_patch/build/src",
+  "command": "/usr/bin/c++   -DAT_PARALLEL_OPENMP=1 -Dalex_patch_EXPORTS -isystem /home/racecar/rrg/alex_patch/src -isystem /usr/include/opencv -I/home/racecar/rrg/alex_patch/include -isystem /home/racecar/libtorch/include -isystem /home/racecar/libtorch/include/torch/csrc/api/include   -D_GLIBCXX_USE_CXX11_ABI=0 -O3 -DNDEBUG -fPIC   -D_GLIBCXX_USE_CXX11_ABI=0 -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-write-strings -Wno-unknown-pragmas -Wno-missing-braces -fopenmp -o CMakeFiles/alex_patch.dir/alex_patch/alex_patch.cpp.o -c /home/racecar/rrg/alex_patch/src/alex_patch/alex_patch.cpp",
+  "file": "/home/racecar/rrg/alex_patch/src/alex_patch/alex_patch.cpp"
+},
+{
+  "directory": "/home/racecar/rrg/alex_patch/build/src",
+  "command": "/usr/bin/c++   -DAT_PARALLEL_OPENMP=1 -isystem /home/racecar/rrg/alex_patch/src -isystem /usr/include/opencv -I/home/racecar/rrg/alex_patch/include -isystem /home/racecar/libtorch/include -isystem /home/racecar/libtorch/include/torch/csrc/api/include   -D_GLIBCXX_USE_CXX11_ABI=0 -O3 -DNDEBUG   -std=c++14 -Wall -D_GLIBCXX_USE_CXX11_ABI=0 -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-write-strings -Wno-unknown-pragmas -Wno-missing-braces -fopenmp -o CMakeFiles/alex_patch_eval.dir/main.cpp.o -c /home/racecar/rrg/alex_patch/src/main.cpp",
+  "file": "/home/racecar/rrg/alex_patch/src/main.cpp"
+}
+]
